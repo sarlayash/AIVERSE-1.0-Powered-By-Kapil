@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AIVERSE 1.0 | SARLAYASH Productions Presents • Powered By Kapil</title>
+  <meta name="description" content="SARLAYASH Productions Presents AIVERSE 1.0 Powered By Kapil - The ultimate AI, GenAI & Agentic AI Video Game combining Candy Crush cascades, Chess tactics & Mario platformer velocity. Certified by Google & Microsoft tech standards.">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00f0ff">
+  <link rel="icon" type="image/png" href="icons/favicon.ico">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="logo-area">
+      <div class="logo-icon">🧠</div>
+      <div class="logo-text">
+        <div class="brand-kicker">SARLAYASH PRODUCTIONS PRESENTS</div>
+        <div class="brand-main-row">
+          <h1 class="brand-title">AIVERSE 1.0</h1>
+          <span class="brand-powered-badge">⚡ Powered By Kapil</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-nav">
+      <!-- Game Mode Buttons -->
+      <button class="mode-btn active" data-mode="CAMPAIGN">🎮 Campaign</button>
+      <button class="mode-btn" data-mode="SPARRING_BOT">🤖 Spar Bot</button>
+      <button class="mode-btn" data-mode="PASS_AND_PLAY">👥 2P Hotseat</button>
+      <button class="mode-btn" data-mode="ONLINE_ROOM">🌐 Online Room</button>
+      <button class="mode-btn" data-mode="TIMED">⏱️ Timed Blitz</button>
+
+      <!-- Utility Buttons -->
+      <button class="action-btn gold" id="btn-open-certs">🏆 Badges & Certs</button>
+      <button class="mode-btn" id="btn-open-codex">📚 AI Codex</button>
+      <button class="mode-btn" id="btn-sound-toggle">🔊 Sound On</button>
+      <button class="action-btn" id="btn-download-app">💾 Download App</button>
+      <button class="action-btn" id="btn-install-pwa" style="display: none;">📲 Install App</button>
+    </div>
+  </header>
+
+  <!-- Main Game Arena -->
+  <main class="main-layout">
+
+    <!-- Left Panel: Levels, Goals & Curriculum -->
+    <aside class="glass-panel">
+      <div class="panel-title">
+        <span>🗺️</span> Level Curriculum
+      </div>
+      <div class="level-scroll" id="level-select-list">
+        <!-- Injected via levels.js -->
+      </div>
+
+      <!-- Active Level Objective -->
+      <div class="panel-title" style="margin-top: 10px;">
+        <span>🎯</span> Current Directive
+      </div>
+      <div class="intel-card">
+        <div class="intel-badge">Mission Benchmark</div>
+        <div class="intel-heading" id="hud-level-title">Level 1: Perceptron Awakening</div>
+        <div class="intel-body" id="hud-level-goal">Match 15 LoRA Tensor Weights & reach Loss ≤ 0.20</div>
+        <div class="intel-standard" id="hud-target-progress">Progress: 0 / 15</div>
+      </div>
+
+      <!-- Curriculum Intel Card -->
+      <div class="panel-title" style="margin-top: 10px;">
+        <span>🎓</span> Architectural Intel
+      </div>
+      <div class="intel-card">
+        <div class="intel-badge">Tech Standards Grounding</div>
+        <div class="intel-heading" id="curriculum-intel-title">Artificial Neuron</div>
+        <div class="intel-body" id="curriculum-intel-desc">
+          Calculates output y = Activation(W · X + b). Weights scale input importance, while loss optimization guides the gradient descent path.
+        </div>
+        <div class="intel-standard">Aligned: Google Cloud & Microsoft Azure AI</div>
+      </div>
+    </aside>
+
+    <!-- Center Arena: HUD & Neural Board -->
+    <section class="arena-center">
+
+      <!-- Real-time HUD -->
+      <div class="hud-bar">
+        <div class="hud-item">
+          <span class="hud-label">Compute Score</span>
+          <span class="hud-val" id="hud-score">0</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Model Loss</span>
+          <span class="hud-val loss" id="hud-loss">0.500</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Moves / Latency</span>
+          <span class="hud-val" id="hud-moves">25</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Attention Chain</span>
+          <span class="hud-val" id="hud-combo">1x Attention</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Active Swarm</span>
+          <div class="turn-badge turn-p1" id="hud-turn-badge">🔵 Blue Swarm</div>
+        </div>
+      </div>
+
+      <!-- The 8x8 Board -->
+      <div class="board-container" id="game-board">
+        <!-- Injected via board.js -->
+      </div>
+
+      <!-- Quick Legend & Mechanics Summary -->
+      <div style="font-size: 11px; color: var(--text-muted); display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;">
+        <span>🍬 <strong>Candy Crush:</strong> Swap adjacent tokens for 3+ attention cascades.</span>
+        <span>♟️ <strong>Chess:</strong> Click your Agent piece to move/harvest tokens or capture enemies.</span>
+        <span>🍄 <strong>Mario:</strong> Crack '?' Mystery blocks for LoRA boosts and dodge Hallucination bombs!</span>
+      </div>
+    </section>
+
+    <!-- Right Panel: Live Agentic Stream & Match Controls -->
+    <aside class="glass-panel">
+      <!-- Bot & Multiplayer Setup Controls (Dynamic visibility) -->
+      <div id="section-bot-controls" style="display: none; flex-direction: column; gap: 6px;">
+        <div class="panel-title"><span>🤖</span> AI Sparring Partner</div>
+        <label style="font-size: 12px; color: var(--text-muted);">Opponent Personality:</label>
+        <select id="select-bot-diff" style="background: #091326; color: #fff; border: 1px solid var(--cyan-glow); padding: 6px; border-radius: 6px;">
+          <option value="OVERFIT">Dr. Overfit (Beginner - Greedy)</option>
+          <option value="DEEPSEEKER" selected>DeepSeeker-Pro (Intermediate - Heuristic)</option>
+          <option value="OMNISENTINEL">OmniSentinel AGI (Master - Minimax)</option>
+        </select>
+      </div>
+
+      <div id="section-multiplayer-controls" style="display: none; flex-direction: column; gap: 8px;">
+        <div class="panel-title"><span>🌐</span> Multiplayer Room</div>
+        <div style="display: flex; gap: 6px;">
+          <button class="action-btn" id="btn-create-room" style="flex: 1;">Create Room</button>
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <input type="text" id="input-room-code" placeholder="ROOM CODE" maxlength="6" style="flex: 1; background: #081022; color: #fff; border: 1px solid var(--cyan-glow); padding: 6px 10px; border-radius: 6px; text-transform: uppercase;">
+          <button class="mode-btn" id="btn-join-room">Join</button>
+        </div>
+        <div id="mp-status-indicator" style="font-size: 11px; color: var(--gold-glow);">Ready to connect</div>
+      </div>
+
+      <!-- Agentic Thought Stream (ReAct Loop) -->
+      <div class="panel-title">
+        <span>⚡</span> Agentic Thought Stream
+      </div>
+      <div class="thought-stream-container" id="agent-thought-stream">
+        <div class="log-entry"><span class="log-time">[System]</span> Neural weights initialized. Ready for inference.</div>
+      </div>
+
+      <!-- Tactical Pieces Reference -->
+      <div class="panel-title" style="margin-top: 10px;">
+        <span>🛡️</span> Swarm Architecture
+      </div>
+      <div style="font-size: 11px; display: flex; flex-direction: column; gap: 6px; color: var(--text-muted);">
+        <div>👑 <strong>Orchestrator:</strong> ReAct Planner, moves 1 step, +25% bonus to adjacent matches.</div>
+        <div>⚔️ <strong>Executor:</strong> Tool Caller, Knight L-jump / 2-step dash, smashes Rate Limit walls.</div>
+        <div>🔮 <strong>Critic:</strong> Evaluator, diagonal sweep, audits Hallucination hazards.</div>
+        <div>🛡️ <strong>Memory Unit:</strong> Sentinel, advances forward, promotes at rank 8.</div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Floating Toast -->
+  <div class="intel-toast" id="intel-toast">
+    <div id="toast-title">Architectural Insight</div>
+    <div id="toast-desc">Scaled Dot-Product Attention: Q, K, V calculation complete.</div>
+  </div>
+
+  <!-- MODAL: Victory -->
+  <div class="modal-backdrop" id="modal-victory">
+    <div class="modal-content" style="max-width: 520px; text-align: center;">
+      <div style="font-size: 54px;">🏆</div>
+      <h2 style="font-size: 28px; color: var(--gold-glow);">BENCHMARK CONQUERED!</h2>
+      <p style="color: var(--text-muted); font-size: 14px;">Model Converged with Optimal Generalization</p>
+      
+      <div style="background: rgba(15, 25, 55, 0.7); border: 1px solid var(--cyan-glow); border-radius: 10px; padding: 14px; margin: 12px 0; display: flex; justify-content: space-around;">
+        <div>
+          <div style="font-size: 11px; color: var(--text-muted);">FINAL COMPUTE</div>
+          <div style="font-size: 20px; font-weight: 900; color: var(--cyan-glow);" id="vic-score">0</div>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: var(--text-muted);">FINAL LOSS</div>
+          <div style="font-size: 20px; font-weight: 900; color: var(--green-glow);" id="vic-loss">0.000</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button class="action-btn gold" id="btn-next-level">Next Level & Benchmark ➡️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Defeat -->
+  <div class="modal-backdrop" id="modal-defeat">
+    <div class="modal-content" style="max-width: 480px; text-align: center;">
+      <div style="font-size: 48px;">💥</div>
+      <h2 style="font-size: 24px; color: #ff4444;">TRAINING LOSS DIVERGED!</h2>
+      <p style="color: var(--text-muted); font-size: 13px;">GPU compute budget exhausted or hallucination threshold exceeded.</p>
+      
+      <div style="margin: 16px 0;">
+        <button class="action-btn" id="btn-retry-level">🔄 Re-Initialize Epoch (Retry)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Certificates & Badges -->
+  <div class="modal-backdrop" id="modal-certificates">
+    <div class="modal-content" style="max-width: 980px;">
+      <div class="modal-header">
+        <h2 class="modal-title">🏆 Verified Badges & Official Certificates</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-muted);">
+        Accredited credentials benchmarked to <strong>Google Cloud Generative AI</strong> & <strong>Microsoft Azure AI Engineer</strong> curriculum competencies. Download in vector PDF or high-resolution PNG format.
+      </p>
+
+      <!-- Recipient Customizer -->
+      <div class="cert-controls">
+        <div class="cert-input-group">
+          <label for="cert-user-name">Your Full Name:</label>
+          <input type="text" id="cert-user-name" value="Lead AI Architect" placeholder="Enter recipient name">
+        </div>
+        <button class="action-btn gold" id="btn-dl-cert-pdf">📄 Download Official PDF</button>
+        <button class="action-btn" id="btn-dl-cert-png">🖼️ Download High-Res PNG</button>
+      </div>
+
+      <!-- Live Certificate Canvas Preview -->
+      <div id="cert-canvas-preview" style="text-align: center; margin: 10px 0;">
+        <!-- Canvas injected via certs.js -->
+      </div>
+
+      <!-- Verified Milestone Badges Section -->
+      <div class="panel-title" style="margin-top: 10px;">
+        <span>🎖️</span> Verified Milestone Badges (Click Any Badge to Download PNG)
+      </div>
+      <div class="badge-preview-grid" id="badge-preview-grid">
+        <!-- Injected via certs.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AI Knowledge Codex & Quizzes -->
+  <div class="modal-backdrop" id="modal-codex">
+    <div class="modal-content" style="max-width: 900px;">
+      <div class="modal-header">
+        <h2 class="modal-title">📚 AI, GenAI & Agentic Knowledge Codex</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      
+      <p style="font-size: 13px; color: var(--text-muted);">
+        Comprehensive architectural reference handbook grounded in <strong>Google DeepMind & Microsoft AI</strong> enterprise standards. Study concepts to boost your in-game performance!
+      </p>
+
+      <!-- Codex Content Sections -->
+      <div id="codex-content-area" style="display: flex; flex-direction: column; gap: 16px;">
+        <!-- Injected via codex.js -->
+      </div>
+
+      <!-- Interactive Quizzes Area -->
+      <div id="codex-quiz-area" style="margin-top: 16px;">
+        <!-- Injected via codex.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <strong>SARLAYASH PRODUCTIONS PRESENTS</strong> • <strong>AIVERSE 1.0</strong> • <em>POWERED BY KAPIL</em> &copy; 2026 • AI, GenAI & Autonomous Agent Video Game • Aligned with Google Cloud & Microsoft Azure Standards
+  </footer>
+
+  <!-- Scripts -->
+  <script src="lib/jspdf.umd.min.js"></script>
+  <script src="lib/confetti.browser.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/board.js"></script>
+  <script src="js/chess-agent.js"></script>
+  <script src="js/bot-ai.js"></script>
+  <script src="js/multiplayer.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/certs.js"></script>
+  <script src="js/codex.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

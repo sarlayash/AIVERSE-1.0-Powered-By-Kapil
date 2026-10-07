@@ -1,0 +1,43 @@
+/**
+ * SYNAPSE SAGA: Animation Keyframes
+ */
+
+@keyframes pulseLogo {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px var(--cyan-glow)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 16px var(--magenta-glow)); }
+}
+
+@keyframes bounceBlock {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes pulseDest {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes pulseFlash {
+  0%, 100% { filter: drop-shadow(0 0 4px #00f0ff); }
+  50% { filter: drop-shadow(0 0 12px #00f0ff); }
+}
+
+@keyframes rotateSingularity {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseLoss {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.08); opacity: 0.8; }
+}
+
+.shake-error {
+  animation: shakeKeyframes 0.35s ease-in-out;
+}
+
+@keyframes shakeKeyframes {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}

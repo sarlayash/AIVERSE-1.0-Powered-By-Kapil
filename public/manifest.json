@@ -1,0 +1,25 @@
+{
+  "name": "SARLAYASH Productions Presents AIVERSE 1.0 - Powered By Kapil",
+  "short_name": "AIVERSE 1.0",
+  "description": "SARLAYASH Productions Presents AIVERSE 1.0 Powered By Kapil. Master AI, GenAI & Agentic AI with an epic hybrid of Candy Crush cascades, Chess tactics & Mario platformer velocity. Certified by Google & Microsoft tech standards.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#070b19",
+  "theme_color": "#00f0ff",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "games", "productivity"]
+}
