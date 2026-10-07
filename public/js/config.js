@@ -184,43 +184,41 @@ const CONFIG = {
     }
   },
 
-  // Certification Standards & Badges
+  // Avatars for User Journey & Profile Selection
+  AVATARS: [
+    { id: 'av_synapse', name: 'Dr. Synapse', role: 'Chief Neural Architect', icon: '🧠', color: '#00f0ff' },
+    { id: 'av_quantum', name: 'Quantum Ray', role: 'Prompt Alchemist', icon: '⚡', color: '#ffd700' },
+    { id: 'av_agent', name: 'Agent Neo', role: 'Autonomous Swarm Leader', icon: '🤖', color: '#00ff88' },
+    { id: 'av_oracle', name: 'Oracle Veda', role: 'Critic & Safety Evaluator', icon: '🔮', color: '#b026ff' },
+    { id: 'av_sentinel', name: 'Cyber Sentinel', role: 'Vector Memory Unit', icon: '🛡️', color: '#38bdf8' },
+    { id: 'av_singularity', name: 'Nova Singularity', role: 'AGI Frontier Pioneer', icon: '🌌', color: '#ff007f' }
+  ],
+
+  // 10 Progressive Milestone Level Badges (Unlock after beating each Level)
+  LEVEL_BADGES: [
+    { id: 'badge_lvl1', level: 1, title: 'Perceptron Pioneer', symbol: '🥉', color: '#cd7f32', desc: 'Mastered Artificial Neurons, Weights, Biases & ReLU activation functions.' },
+    { id: 'badge_lvl2', level: 2, title: 'Gradient Navigator', symbol: '📉', color: '#38bdf8', desc: 'Navigated Loss Landscapes & optimized Backpropagation without vanishing gradients.' },
+    { id: 'badge_lvl3', level: 3, title: 'Latent Space Explorer', symbol: '🔷', color: '#00f0ff', desc: 'Mapped High-Dimensional Vector Embeddings & mastered Cosine Proximity.' },
+    { id: 'badge_lvl4', level: 4, title: 'Attention Specialist', symbol: '🟣', color: '#b026ff', desc: 'Executed Scaled Dot-Product Self-Attention (Q, K, V) & Flash Attention linear beams.' },
+    { id: 'badge_lvl5', level: 5, title: 'Prompt Engineer', symbol: '🔮', color: '#ec4899', desc: 'Mastered In-Context Learning, Sampling Temperature & mitigated Hallucinations.' },
+    { id: 'badge_lvl6', level: 6, title: 'RAG Grounding Master', symbol: '🟢', color: '#00ff88', desc: 'Chunked enterprise documents & architected Vector Database Retrieval.' },
+    { id: 'badge_lvl7', level: 7, title: 'ReAct Autonomous Agent', symbol: '🔴', color: '#ef4444', desc: 'Choreographed autonomous ReAct cycles: Thought -> Action -> Observation.' },
+    { id: 'badge_lvl8', level: 8, title: 'Tool Calling Dispatcher', symbol: '⚔️', color: '#f59e0b', desc: 'Engineered OpenAPI Function Calling & secure code execution sandboxes.' },
+    { id: 'badge_lvl9', level: 9, title: 'Swarm Choreographer', symbol: '🐝', color: '#10b981', desc: 'Orchestrated collaborative Multi-Agent Swarms with Critic consensus.' },
+    { id: 'badge_lvl10', level: 10, title: 'Frontier Alignment Master', symbol: '💎', color: '#00f0ff', desc: 'Conquered Adversarial Jailbreaks & achieved RLHF Constitutional Alignment.' }
+  ],
+
+  // Official Certification (Strictly Unlocked ONLY after 60-Min 200 MCQ Exam >= 90%)
   CERTIFICATES: [
     {
-      id: 'cert_apprentice',
-      tier: 'Bronze',
-      title: 'Certified AI & Machine Learning Apprentice',
-      minLevel: 3,
-      standard: 'Microsoft Azure AI Fundamentals (AI-900) & Google Cloud AI Foundations',
-      color: '#cd7f32',
-      badgeIcon: '🥉'
-    },
-    {
-      id: 'cert_genai',
-      tier: 'Silver',
-      title: 'Certified Generative AI & Transformer Specialist',
-      minLevel: 6,
-      standard: 'Google Cloud Generative AI Leader & Microsoft Azure OpenAI Engineer',
-      color: '#c0c0c0',
-      badgeIcon: '🥈'
-    },
-    {
-      id: 'cert_agentic',
-      tier: 'Gold',
-      title: 'Certified Autonomous Agent Systems Architect',
-      minLevel: 9,
-      standard: 'Google Vertex AI Agent Builder & Microsoft Azure AI Agentic Engineering',
+      id: 'cert_architect',
+      tier: 'Diamond Gold',
+      title: 'Certified Autonomous Agent & Generative AI Systems Architect',
+      examRequired: true,
+      minScore: 180, // 90% of 200 MCQs
+      standard: 'Google Cloud Generative AI Leader & Microsoft Azure AI Engineer Standard',
       color: '#ffd700',
-      badgeIcon: '🥇'
-    },
-    {
-      id: 'cert_grandmaster',
-      tier: 'Platinum',
-      title: 'Frontier AI & Multi-Agent Swarm Grandmaster',
-      minLevel: 10,
-      standard: 'Google DeepMind Frontier Standards & Advanced Enterprise Agent Architecture',
-      color: '#00f0ff',
-      badgeIcon: '💎'
+      badgeIcon: '🏆'
     }
   ]
 };

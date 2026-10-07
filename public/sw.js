@@ -14,6 +14,8 @@ const ASSETS_TO_CACHE = [
   './js/levels.js',
   './js/certs.js',
   './js/codex.js',
+  './js/exam-questions.js',
+  './js/exam-engine.js',
   './js/app.js',
   './lib/jspdf.umd.min.js',
   './lib/confetti.browser.js',

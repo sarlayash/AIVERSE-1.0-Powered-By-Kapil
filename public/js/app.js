@@ -1,6 +1,8 @@
 /**
- * SYNAPSE SAGA: Main Game Controller
- * Orchestrates Board, Chess Agents, Bot Sparring, Multiplayer, Badges, and UI.
+ * SARLAYASH PRODUCTIONS PRESENTS: AIVERSE 1.0 (Powered By Kapil)
+ * Main Game Controller
+ * Orchestrates Board, Chess Agents, Bot Sparring, Multiplayer, Badges, 
+ * Theme Toggling, User Onboarding & Avatars, Cinematic Level Transitions, and UI.
  */
 
 class SynapseApp {
@@ -10,13 +12,19 @@ class SynapseApp {
     this.botAI = new BotAI('DEEPSEEKER');
     this.multiplayer = null;
 
+    // Theme & User Profile State
+    this.theme = localStorage.getItem('aiverse_theme') || 'dark';
+    this.userName = localStorage.getItem('aiverse_user_name') || localStorage.getItem('synapse_user_name') || 'Lead AI Architect';
+    this.selectedAvatar = JSON.parse(localStorage.getItem('aiverse_avatar') || 'null') || (CONFIG.AVATARS && CONFIG.AVATARS[0]) || { id: 'av_synapse', name: 'Dr. Synapse', role: 'Chief Neural Architect', icon: '🧠', color: '#00f0ff' };
+    this.completedLevels = JSON.parse(localStorage.getItem('aiverse_completed_levels') || '[]');
+
     // Game State
     this.currentMode = 'CAMPAIGN'; // 'CAMPAIGN', 'SPARRING_BOT', 'PASS_AND_PLAY', 'ONLINE_ROOM', 'TIMED'
     this.currentLevelIdx = 0;
     this.currentLevel = LEVELS_DATA[0];
 
     this.score = 0;
-    this.loss = 0.50; // Initial high loss
+    this.loss = 0.50; // Initial loss
     this.movesLeft = 25;
     this.timeLeft = null;
     this.timerInterval = null;
@@ -24,13 +32,24 @@ class SynapseApp {
     this.comboChain = 1;
     this.tokenStats = {};
     this.unlockedLevels = 1;
-    this.userName = localStorage.getItem('synapse_user_name') || 'Lead AI Architect';
 
     // Interaction State
     this.selectedCell = null; // { r, c }
     this.selectedPiece = null; // piece object
     this.validPieceMoves = []; // array of { r, c }
     this.isProcessingTurn = false;
+
+    // Announcements
+    this.announcements = [
+      'SARLAYASH PRODUCTIONS PRESENTS: Welcome to AIVERSE 1.0 Powered By Kapil!',
+      '🎖️ Milestone Badges: Complete Levels 1–10 to unlock verified badges for each AI architecture paradigm.',
+      '🎓 60-Minute Assessment: 200 Industry-standard MCQs across Classical ML, GenAI, and Agentic AI. 90% required to pass!',
+      '🔒 Official Certificate: Accredited to Google Cloud & Microsoft Azure standards, unlocked only after passing the exam.',
+      '🍬 Candy Crush + ♟️ Chess + 🍄 Mario: Cascades, strategic piece harvesting, and power-up discovery combined!'
+    ];
+    this.announcementIndex = 0;
+    this.announcementInterval = null;
+    this.priorityAnnouncementTimeout = null;
 
     // PWA Install Prompt
     this.deferredInstallPrompt = null;
@@ -39,12 +58,170 @@ class SynapseApp {
   }
 
   init() {
+    this.applyTheme(this.theme);
+    this.updateUserProfileHeader();
+    this.setupAnnouncements();
     this.setupMultiplayer();
     this.setupEventListeners();
     this.setupPwa();
+
+    // Check if first-time user: trigger onboarding modal
+    if (!localStorage.getItem('aiverse_onboarded')) {
+      setTimeout(() => this.showOnboardingModal(), 200);
+    }
+
     this.loadLevel(this.currentLevelIdx);
     this.renderCodex();
     this.updateLog('✨ SARLAYASH PRODUCTIONS PRESENTS: AIVERSE 1.0 (Powered By Kapil) initialized.');
+  }
+
+  // --- THEME SWITCHER (Light & Dark Mode) ---
+  applyTheme(theme) {
+    this.theme = theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('aiverse_theme', theme);
+
+    const toggleBtn = document.getElementById('btn-theme-toggle');
+    if (toggleBtn) {
+      toggleBtn.innerHTML = theme === 'light' ? '🌙 Dark' : '☀️ Light';
+      toggleBtn.title = `Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`;
+    }
+  }
+
+  toggleTheme() {
+    const newTheme = this.theme === 'light' ? 'dark' : 'light';
+    this.applyTheme(newTheme);
+    this.showAnnouncement(`🎨 Theme switched to ${newTheme.toUpperCase()} mode.`);
+  }
+
+  // --- USER PROFILE & AVATAR SELECTION ---
+  updateUserProfileHeader() {
+    const nameEl = document.getElementById('header-user-name');
+    const iconEl = document.getElementById('header-avatar-icon');
+    if (nameEl) nameEl.textContent = this.userName;
+    if (iconEl) iconEl.textContent = this.selectedAvatar?.icon || '🧠';
+
+    const certNameInput = document.getElementById('cert-user-name');
+    if (certNameInput) certNameInput.value = this.userName;
+  }
+
+  showOnboardingModal() {
+    const modal = document.getElementById('modal-onboarding');
+    if (!modal) return;
+
+    const nameInput = document.getElementById('onboarding-user-name');
+    if (nameInput) nameInput.value = this.userName;
+
+    const avatarGrid = document.getElementById('onboarding-avatar-grid');
+    if (avatarGrid && CONFIG.AVATARS) {
+      avatarGrid.innerHTML = '';
+      CONFIG.AVATARS.forEach(av => {
+        const card = document.createElement('div');
+        card.className = `avatar-card ${this.selectedAvatar?.id === av.id ? 'selected' : ''}`;
+        card.innerHTML = `
+          <div class="avatar-card-icon">${av.icon}</div>
+          <div class="avatar-card-name">${av.name}</div>
+          <div class="avatar-card-role">${av.role}</div>
+        `;
+        card.addEventListener('click', () => {
+          this.selectedAvatar = av;
+          avatarGrid.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+        });
+        avatarGrid.appendChild(card);
+      });
+    }
+
+    modal.classList.add('active');
+  }
+
+  saveOnboarding() {
+    const nameInput = document.getElementById('onboarding-user-name');
+    const nameVal = nameInput ? nameInput.value.trim() : '';
+    if (nameVal) {
+      this.userName = nameVal;
+    }
+    localStorage.setItem('aiverse_user_name', this.userName);
+    localStorage.setItem('synapse_user_name', this.userName);
+    localStorage.setItem('aiverse_avatar', JSON.stringify(this.selectedAvatar));
+    localStorage.setItem('aiverse_onboarded', 'true');
+
+    this.updateUserProfileHeader();
+    document.getElementById('modal-onboarding')?.classList.remove('active');
+    this.showAnnouncement(`👋 Welcome Candidate ${this.userName} (${this.selectedAvatar.name}) to AIVERSE 1.0!`);
+    if (window.soundEngine) soundEngine.playPowerup();
+  }
+
+  // --- ANNOUNCEMENTS SYSTEM ---
+  setupAnnouncements() {
+    const textEl = document.getElementById('announcement-text');
+    if (textEl && this.announcements.length > 0) {
+      textEl.textContent = this.announcements[0];
+    }
+
+    if (this.announcementInterval) clearInterval(this.announcementInterval);
+    this.announcementInterval = setInterval(() => {
+      this.rotateAnnouncement();
+    }, 7500);
+  }
+
+  rotateAnnouncement() {
+    const textEl = document.getElementById('announcement-text');
+    if (!textEl) return;
+    this.announcementIndex = (this.announcementIndex + 1) % this.announcements.length;
+    textEl.style.opacity = '0';
+    setTimeout(() => {
+      textEl.textContent = this.announcements[this.announcementIndex];
+      textEl.style.opacity = '1';
+    }, 300);
+  }
+
+  showAnnouncement(msg) {
+    const textEl = document.getElementById('announcement-text');
+    if (!textEl) return;
+    if (this.priorityAnnouncementTimeout) clearTimeout(this.priorityAnnouncementTimeout);
+    textEl.style.opacity = '0';
+    setTimeout(() => {
+      textEl.textContent = msg;
+      textEl.style.opacity = '1';
+    }, 200);
+
+    this.priorityAnnouncementTimeout = setTimeout(() => {
+      this.rotateAnnouncement();
+    }, 9000);
+  }
+
+  // --- CINEMATIC LEVEL LOADING SCREEN ---
+  showLevelLoadingScreen(lvl, callback) {
+    const loader = document.getElementById('cinematic-level-loader');
+    if (!loader) {
+      if (callback) callback();
+      return;
+    }
+
+    const titleEl = document.getElementById('cinematic-level-title');
+    const conceptEl = document.getElementById('cinematic-level-concept');
+    const goalEl = document.getElementById('cinematic-level-goal');
+    const barFill = document.getElementById('cinematic-progress-bar');
+
+    const lvlNumber = lvl.id > 100 ? `BLITZ ${lvl.id - 100}` : `LEVEL ${lvl.id}`;
+    if (titleEl) titleEl.textContent = `LOADING ${lvlNumber}`;
+    if (conceptEl) conceptEl.textContent = lvl.conceptTitle || lvl.title;
+    if (goalEl) goalEl.textContent = `Objective: ${lvl.goalText}`;
+    if (barFill) barFill.style.width = '0%';
+
+    loader.classList.add('active');
+
+    setTimeout(() => {
+      if (barFill) barFill.style.width = '100%';
+    }, 50);
+
+    setTimeout(() => {
+      loader.classList.remove('active');
+      if (barFill) barFill.style.width = '0%';
+      if (callback) callback();
+    }, 650);
   }
 
   setupMultiplayer() {
@@ -62,6 +239,24 @@ class SynapseApp {
         this.switchMode(mode);
       });
     });
+
+    // Theme Toggle
+    const themeBtn = document.getElementById('btn-theme-toggle');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => this.toggleTheme());
+    }
+
+    // User Profile / Avatar
+    const profileBtn = document.getElementById('btn-user-profile');
+    if (profileBtn) {
+      profileBtn.addEventListener('click', () => this.showOnboardingModal());
+    }
+
+    // Save Onboarding
+    const saveOnboardBtn = document.getElementById('btn-save-onboarding');
+    if (saveOnboardBtn) {
+      saveOnboardBtn.addEventListener('click', () => this.saveOnboarding());
+    }
 
     // Sound toggle
     const soundBtn = document.getElementById('btn-sound-toggle');
@@ -88,6 +283,27 @@ class SynapseApp {
       });
     }
 
+    // Open Exam Portal from Header
+    const examBtn = document.getElementById('btn-open-exam');
+    if (examBtn) {
+      examBtn.addEventListener('click', () => {
+        if (window.examPortal) {
+          window.examPortal.startExam();
+        }
+      });
+    }
+
+    // Take Exam from Certificate Lock Banner
+    const certTakeExamBtn = document.getElementById('btn-cert-take-exam');
+    if (certTakeExamBtn) {
+      certTakeExamBtn.addEventListener('click', () => {
+        document.getElementById('modal-certificates')?.classList.remove('active');
+        if (window.examPortal) {
+          window.examPortal.startExam();
+        }
+      });
+    }
+
     // Open Certificate Modal
     const certBtn = document.getElementById('btn-open-certs');
     if (certBtn) {
@@ -111,34 +327,54 @@ class SynapseApp {
       nameInput.addEventListener('input', (e) => {
         this.userName = e.target.value.trim() || 'AI Architect';
         localStorage.setItem('synapse_user_name', this.userName);
+        localStorage.setItem('aiverse_user_name', this.userName);
+        this.updateUserProfileHeader();
         this.updateCertPreview();
       });
     }
 
-    // Certificate Download PNG
+    // Certificate Download PNG (Strict Gate Check)
     const dlCertPngBtn = document.getElementById('btn-dl-cert-png');
     if (dlCertPngBtn) {
       dlCertPngBtn.addEventListener('click', () => {
+        const isCertUnlocked = window.examPortal ? window.examPortal.isCertificateUnlocked() : (localStorage.getItem('aiverse_cert_unlocked') === 'true');
+        if (!isCertUnlocked) {
+          alert('🔒 CERTIFICATE LOCKED!\nYou must pass the 60-Minute 200 MCQ Assessment with ≥ 90% (180/200) to download this official credential.');
+          return;
+        }
+
+        const examScore = parseInt(localStorage.getItem('aiverse_exam_score') || '185', 10);
         const canvas = certificateEngine.renderCertificateCanvas({
           userName: this.userName,
-          tierTitle: this.getHighestEarnedCert().title,
-          tierLevel: this.currentLevel.id,
-          score: this.score
+          avatar: this.selectedAvatar,
+          tierTitle: CONFIG.CERTIFICATES[0].title,
+          tierLevel: 10,
+          score: this.score,
+          examScore: examScore
         });
-        certificateEngine.downloadCanvasAsPng(canvas, `AI-Mastery-Certificate-${this.userName.replace(/\s+/g, '_')}.png`);
+        certificateEngine.downloadCanvasAsPng(canvas, `AIVERSE-1.0-Master-Certificate-${this.userName.replace(/\s+/g, '_')}.png`);
       });
     }
 
-    // Certificate Download PDF
+    // Certificate Download PDF (Strict Gate Check)
     const dlCertPdfBtn = document.getElementById('btn-dl-cert-pdf');
     if (dlCertPdfBtn) {
       dlCertPdfBtn.addEventListener('click', () => {
+        const isCertUnlocked = window.examPortal ? window.examPortal.isCertificateUnlocked() : (localStorage.getItem('aiverse_cert_unlocked') === 'true');
+        if (!isCertUnlocked) {
+          alert('🔒 CERTIFICATE LOCKED!\nYou must pass the 60-Minute 200 MCQ Assessment with ≥ 90% (180/200) to download this official credential.');
+          return;
+        }
+
+        const examScore = parseInt(localStorage.getItem('aiverse_exam_score') || '185', 10);
         certificateEngine.downloadCertificateAsPdf({
           userName: this.userName,
-          tierTitle: this.getHighestEarnedCert().title,
-          tierLevel: this.currentLevel.id,
-          score: this.score
-        }, `AI-Mastery-Certificate-${this.userName.replace(/\s+/g, '_')}.pdf`);
+          avatar: this.selectedAvatar,
+          tierTitle: CONFIG.CERTIFICATES[0].title,
+          tierLevel: 10,
+          score: this.score,
+          examScore: examScore
+        }, `AIVERSE-1.0-Master-Certificate-${this.userName.replace(/\s+/g, '_')}.pdf`);
       });
     }
 
@@ -197,12 +433,15 @@ class SynapseApp {
     }
   }
 
-  // Load a campaign or timed level
+  // Load a campaign or timed level with Cinematic Loading Screen
   loadLevel(levelIdx) {
     if (this.timerInterval) clearInterval(this.timerInterval);
 
     this.currentLevelIdx = levelIdx;
     this.currentLevel = LEVELS_DATA[levelIdx];
+
+    // Trigger Cinematic Loading Screen
+    this.showLevelLoadingScreen(this.currentLevel);
 
     this.score = 0;
     this.loss = 0.50;
@@ -290,10 +529,8 @@ class SynapseApp {
     // 1. If clicking a friendly chess piece
     if (cell.piece && cell.piece.owner === this.activePlayer) {
       if (this.selectedPiece === cell.piece) {
-        // Deselect
         this.clearSelection();
       } else {
-        // Select piece & compute valid moves
         this.selectedPiece = cell.piece;
         this.selectedCell = null;
         this.validPieceMoves = this.chessSystem.getValidMoves(cell.piece);
@@ -311,26 +548,22 @@ class SynapseApp {
         this.executePieceMove(this.selectedPiece, r, c);
         return;
       } else {
-        // If clicked elsewhere that is not valid, clear piece selection
         this.clearSelection();
       }
     }
 
     // 3. Candy Crush style Token Swap Selection
     if (!this.selectedCell) {
-      // First token selected
       this.selectedCell = { r, c };
       soundEngine.playSwap();
       this.renderBoard();
     } else {
-      // Second token selected -> attempt swap
       const r1 = this.selectedCell.r;
       const c1 = this.selectedCell.c;
       const r2 = r;
       const c2 = c;
 
       if (r1 === r2 && c1 === c2) {
-        // Clicked same cell -> deselect
         this.clearSelection();
         this.renderBoard();
         return;
@@ -339,7 +572,6 @@ class SynapseApp {
       if (this.board.canSwap(r1, c1, r2, c2)) {
         this.executeTokenSwap(r1, c1, r2, c2);
       } else {
-        // Invalid swap feedback
         soundEngine.playSwap();
         this.flashInvalidSwap(r1, c1, r2, c2);
         this.clearSelection();
@@ -353,7 +585,6 @@ class SynapseApp {
     this.isProcessingTurn = true;
     this.clearSelection();
 
-    // Broadcast if in online room
     if (!isRemote && this.currentMode === 'ONLINE_ROOM') {
       this.multiplayer.sendMove({ type: 'SWAP', r1, c1, r2, c2 });
     }
@@ -362,10 +593,7 @@ class SynapseApp {
     this.board.swap(r1, c1, r2, c2);
     this.renderBoard();
 
-    // Process initial and cascading matches
     await this.resolveCascadeChain();
-
-    // Spend turn & tick hazards
     this.finishTurnAction();
   }
 
@@ -409,13 +637,10 @@ class SynapseApp {
       }
     }
 
-    // Apply gravity to replace harvested token
     this.board.applyGravity();
     this.renderBoard();
 
-    // Check if new matches formed after harvest
     await this.resolveCascadeChain();
-
     this.finishTurnAction();
   }
 
@@ -428,78 +653,67 @@ class SynapseApp {
 
       const result = this.board.processMatches(matches);
 
-      // Audio feedback
       soundEngine.playMatch(combo);
       if (matches.some(m => m.length >= 4)) {
         soundEngine.playFlashAttention();
       }
 
-      // Track token statistics
       matches.forEach(m => {
         this.tokenStats[m.token] = (this.tokenStats[m.token] || 0) + m.cells.length;
       });
 
-      // Score and loss calculations
       const comboMultiplier = 1 + (combo - 1) * 0.4;
       const points = Math.round(result.totalScore * comboMultiplier);
       this.addScore(points);
 
-      // Reduce loss: each token match decreases loss
       const lossReduction = 0.008 * result.tokensCleared * comboMultiplier;
       this.loss = Math.max(0.001, parseFloat((this.loss - lossReduction).toFixed(4)));
 
-      // Add bonus time if in timed speedrun level
-      if (this.timeLeft !== null) {
-        this.timeLeft += 2;
-      }
-
       this.comboChain = combo;
-      this.updateHud();
       this.renderBoard();
+      this.updateHud();
 
-      // Short delay for cascade visual feel
-      await new Promise(r => setTimeout(r, 280));
+      await new Promise(res => setTimeout(res, 220));
 
-      // Gravity drop
       this.board.applyGravity();
       this.renderBoard();
-      await new Promise(r => setTimeout(r, 180));
 
+      await new Promise(res => setTimeout(res, 180));
       combo++;
     }
   }
 
-  // Conclude turn, tick hazards, check victory, handle Bot turn
+  // Finalize turn actions
   finishTurnAction() {
-    this.movesLeft--;
-
-    // Hazard ticking
-    const explosions = this.board.tickHazards();
-    if (explosions.length > 0) {
-      soundEngine.playHazardExplosion();
-      this.loss = Math.min(1.0, parseFloat((this.loss + 0.15).toFixed(3)));
-      this.updateLog(`⚠️ Hallucination Exploded! Loss spiked by +0.15!`);
+    if (this.timeLeft === null) {
+      this.movesLeft--;
     }
 
-    this.chessSystem.tickPieceDurations(this.activePlayer);
+    this.comboChain = 1;
+    const exploded = this.board.tickHazards();
+    if (exploded > 0) {
+      soundEngine.playHallucinationExplode();
+      this.loss = Math.min(1.0, parseFloat((this.loss + 0.15 * exploded).toFixed(3)));
+      this.updateLog(`⚠️ ${exploded} Hallucination(s) exploded! Training loss surged.`);
+    }
+
     this.updateHud();
 
-    // Check Win/Loss conditions
-    const gameEnded = this.checkWinLossCondition();
-    if (gameEnded) {
+    const gameOver = this.checkWinLossCondition();
+    if (gameOver) {
       this.isProcessingTurn = false;
       return;
     }
 
-    // Toggle Turn
-    if (this.currentMode === 'PASS_AND_PLAY' || this.currentMode === 'ONLINE_ROOM') {
-      this.activePlayer = this.activePlayer === 'P1' ? 'P2' : 'P1';
-      this.updateLog(`👉 Turn switched to: ${this.activePlayer === 'P1' ? 'Blue Swarm' : 'Red Collective'}`);
-    } else if (this.currentMode === 'SPARRING_BOT') {
+    // Toggle turn if bot or pass and play
+    if (this.currentMode === 'SPARRING_BOT') {
       this.activePlayer = 'P2';
       this.updateHud();
       this.scheduleBotTurn();
       return;
+    } else if (this.currentMode === 'PASS_AND_PLAY') {
+      this.activePlayer = this.activePlayer === 'P1' ? 'P2' : 'P1';
+      this.updateHud();
     }
 
     this.isProcessingTurn = false;
@@ -529,7 +743,6 @@ class SynapseApp {
           this.updateHud();
         });
       } else {
-        // Fallback pass
         this.activePlayer = 'P1';
         this.isProcessingTurn = false;
         this.updateHud();
@@ -555,7 +768,7 @@ class SynapseApp {
     if (statusEl) statusEl.textContent = message;
   }
 
-  // Win / Loss Verification
+  // Win / Loss Verification with Strict Milestone Badge Unlocking
   checkWinLossCondition(isTimeout = false) {
     const lvl = this.currentLevel;
 
@@ -571,7 +784,17 @@ class SynapseApp {
       soundEngine.playVictory();
       this.triggerConfetti();
 
-      // Unlock next level
+      // Unlock this level's badge progressively!
+      if (!this.completedLevels.includes(lvl.id)) {
+        this.completedLevels.push(lvl.id);
+        localStorage.setItem('aiverse_completed_levels', JSON.stringify(this.completedLevels));
+        const badge = CONFIG.LEVEL_BADGES.find(b => b.level === lvl.id);
+        if (badge) {
+          this.showAnnouncement(`🎖️ Milestone Badge Unlocked: "${badge.title}" for completing Level ${lvl.id}!`);
+        }
+      }
+
+      // Unlock next level in curriculum
       if (this.currentLevelIdx + 1 < LEVELS_DATA.length) {
         this.unlockedLevels = Math.max(this.unlockedLevels, this.currentLevelIdx + 2);
       }
@@ -628,18 +851,15 @@ class SynapseApp {
         cellEl.className = 'grid-cell';
         cellEl.setAttribute('data-pos', `${r}-${c}`);
 
-        // Highlight selected cell
         if (this.selectedCell && this.selectedCell.r === r && this.selectedCell.c === c) {
           cellEl.classList.add('selected-token');
         }
 
-        // Highlight valid chess piece destinations
         const isValidMove = this.validPieceMoves.some(m => m.r === r && m.c === c);
         if (isValidMove) {
           cellEl.classList.add('valid-dest');
         }
 
-        // Render Token
         if (cell.token) {
           const tDef = CONFIG.TOKENS[cell.token];
           const tokenEl = document.createElement('div');
@@ -649,7 +869,6 @@ class SynapseApp {
             <span class="token-badge">${cell.token.substring(0, 3)}</span>
           `;
 
-          // Special Overlays
           if (cell.special === 'FLASH_ROW' || cell.special === 'FLASH_COL') {
             tokenEl.classList.add('special-flash');
             tokenEl.innerHTML += `<div class="flash-beam-indicator">⚡</div>`;
@@ -661,7 +880,6 @@ class SynapseApp {
           cellEl.appendChild(tokenEl);
         }
 
-        // Render Chess Agent Piece
         if (cell.piece) {
           const pDef = CONFIG.PIECES[cell.piece.type];
           const pieceEl = document.createElement('div');
@@ -674,7 +892,6 @@ class SynapseApp {
           cellEl.appendChild(pieceEl);
         }
 
-        // Render Hazards (Hallucination Bomb, Data Drift, Rate Limit)
         if (cell.hazard) {
           const hDef = CONFIG.HAZARDS[cell.hazard];
           const hazardEl = document.createElement('div');
@@ -686,7 +903,6 @@ class SynapseApp {
           cellEl.appendChild(hazardEl);
         }
 
-        // Render Mario Mystery '?' Block or Powerup
         if (cell.powerup) {
           const powerEl = document.createElement('div');
           powerEl.className = 'powerup-mystery-block';
@@ -699,9 +915,7 @@ class SynapseApp {
           cellEl.appendChild(powerEl);
         }
 
-        // Cell click event
         cellEl.addEventListener('click', () => this.handleCellClick(r, c));
-
         boardEl.appendChild(cellEl);
       }
     }
@@ -735,7 +949,6 @@ class SynapseApp {
       turnBadge.className = `turn-badge ${this.activePlayer === 'P1' ? 'turn-p1' : 'turn-p2'}`;
     }
 
-    // Target Progress Indicator
     const targetProg = document.getElementById('hud-target-progress');
     if (targetProg && this.currentLevel.targetToken) {
       const cur = this.tokenStats[this.currentLevel.targetToken] || 0;
@@ -854,16 +1067,6 @@ class SynapseApp {
     }
   }
 
-  getHighestEarnedCert() {
-    let earned = CONFIG.CERTIFICATES[0];
-    CONFIG.CERTIFICATES.forEach(c => {
-      if (this.currentLevel.id >= c.minLevel) {
-        earned = c;
-      }
-    });
-    return earned;
-  }
-
   openCertificateModal() {
     const modal = document.getElementById('modal-certificates');
     if (!modal) return;
@@ -871,47 +1074,84 @@ class SynapseApp {
     modal.classList.add('active');
   }
 
+  // Strict Certificate & Badge Locking Previews
   updateCertPreview() {
     const previewContainer = document.getElementById('cert-canvas-preview');
-    if (!previewContainer) return;
+    const lockBanner = document.getElementById('cert-lock-banner');
+    const btnDlPdf = document.getElementById('btn-dl-cert-pdf');
+    const btnDlPng = document.getElementById('btn-dl-cert-png');
 
-    const highestCert = this.getHighestEarnedCert();
+    const isCertUnlocked = window.examPortal ? window.examPortal.isCertificateUnlocked() : (localStorage.getItem('aiverse_cert_unlocked') === 'true');
+    const examScore = parseInt(localStorage.getItem('aiverse_exam_score') || '0', 10);
+
+    if (isCertUnlocked) {
+      if (lockBanner) lockBanner.classList.add('unlocked');
+      if (btnDlPdf) { btnDlPdf.disabled = false; btnDlPdf.style.opacity = '1'; }
+      if (btnDlPng) { btnDlPng.disabled = false; btnDlPng.style.opacity = '1'; }
+    } else {
+      if (lockBanner) lockBanner.classList.remove('unlocked');
+      if (btnDlPdf) { btnDlPdf.disabled = true; btnDlPdf.style.opacity = '0.4'; btnDlPdf.title = 'Score ≥90% on Exam to unlock'; }
+      if (btnDlPng) { btnDlPng.disabled = true; btnDlPng.style.opacity = '0.4'; btnDlPng.title = 'Score ≥90% on Exam to unlock'; }
+    }
+
+    const highestCert = CONFIG.CERTIFICATES[0];
     const canvas = certificateEngine.renderCertificateCanvas({
       userName: this.userName,
+      avatar: this.selectedAvatar,
       tierTitle: highestCert.title,
-      tierLevel: this.currentLevel.id,
-      score: this.score
+      tierLevel: 10,
+      score: this.score,
+      examScore: examScore > 0 ? examScore : 185
     });
 
-    previewContainer.innerHTML = '';
-    canvas.style.maxWidth = '100%';
-    canvas.style.height = 'auto';
-    canvas.style.borderRadius = '8px';
-    canvas.style.boxShadow = '0 8px 30px rgba(0, 240, 255, 0.2)';
-    previewContainer.appendChild(canvas);
+    if (previewContainer) {
+      previewContainer.innerHTML = '';
+      canvas.style.maxWidth = '100%';
+      canvas.style.height = 'auto';
+      canvas.style.borderRadius = '8px';
+      canvas.style.boxShadow = '0 8px 30px rgba(0, 240, 255, 0.2)';
+      if (!isCertUnlocked) {
+        canvas.style.filter = 'grayscale(85%) opacity(50%)';
+      } else {
+        canvas.style.filter = 'none';
+        canvas.style.opacity = '1';
+      }
+      previewContainer.appendChild(canvas);
+    }
 
-    // Also render badge previews
+    // Render 10 Milestone Badges with strict level completion gating
     const badgeGrid = document.getElementById('badge-preview-grid');
-    if (badgeGrid) {
+    if (badgeGrid && CONFIG.LEVEL_BADGES) {
       badgeGrid.innerHTML = '';
-      CONFIG.CERTIFICATES.forEach(certDef => {
-        const isUnlocked = this.currentLevel.id >= certDef.minLevel;
-        const bCanvas = certificateEngine.renderBadgeCanvas(certDef, this.userName);
+      CONFIG.LEVEL_BADGES.forEach(bDef => {
+        const isUnlocked = this.completedLevels.includes(bDef.level);
+        const bCanvas = certificateEngine.renderBadgeCanvas(bDef, this.userName);
 
         const card = document.createElement('div');
         card.className = `badge-download-card ${isUnlocked ? 'unlocked' : 'locked'}`;
         card.innerHTML = `
-          <div class="badge-title">${certDef.title}</div>
-          <div class="badge-req">${isUnlocked ? '✅ Unlocked' : `🔒 Requires Level ${certDef.minLevel}`}</div>
+          <div class="badge-title">${bDef.title}</div>
+          <div class="badge-req" style="color: ${isUnlocked ? 'var(--green-glow)' : 'var(--text-muted)'}; font-weight: 700;">
+            ${isUnlocked ? '✅ UNLOCKED' : `🔒 Requires Level ${bDef.level}`}
+          </div>
+          <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">${bDef.desc}</div>
         `;
 
         bCanvas.style.width = '120px';
         bCanvas.style.height = '120px';
-        bCanvas.style.cursor = isUnlocked ? 'pointer' : 'default';
-        if (isUnlocked) {
-          bCanvas.title = 'Click to download Badge PNG';
+        bCanvas.style.cursor = isUnlocked ? 'pointer' : 'not-allowed';
+
+        if (!isUnlocked) {
+          bCanvas.style.filter = 'grayscale(100%) opacity(40%)';
+          bCanvas.title = `Locked: Complete Level ${bDef.level} to unlock this badge`;
           bCanvas.addEventListener('click', () => {
-            certificateEngine.downloadCanvasAsPng(bCanvas, `${certDef.id}-Badge-${this.userName.replace(/\s+/g, '_')}.png`);
+            alert(`🔒 This milestone badge is locked! Conquer Level ${bDef.level} in Campaign mode to unlock and download.`);
+          });
+        } else {
+          bCanvas.style.filter = 'none';
+          bCanvas.title = 'Click to download high-resolution PNG Badge';
+          bCanvas.addEventListener('click', () => {
+            certificateEngine.downloadCanvasAsPng(bCanvas, `${bDef.id}-${this.userName.replace(/\s+/g, '_')}.png`);
           });
         }
 

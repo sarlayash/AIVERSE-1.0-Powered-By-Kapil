@@ -13,6 +13,20 @@
 </head>
 <body>
 
+  <!-- Cinematic Level Loading Screen Overlay -->
+  <div class="cinematic-loading-overlay" id="cinematic-level-loader">
+    <div class="cinematic-studio">SARLAYASH PRODUCTIONS PRESENTS</div>
+    <h1 class="cinematic-title" id="cinematic-level-title">LOADING LEVEL 1</h1>
+    <div class="cinematic-concept" id="cinematic-level-concept">Artificial Neuron & Activation Functions</div>
+    <div class="cinematic-goal" id="cinematic-level-goal">Objective: Match 15 LoRA Tensor Weights & reach Loss ≤ 0.20</div>
+    <div class="cinematic-bar-box">
+      <div class="cinematic-bar-fill" id="cinematic-progress-bar"></div>
+    </div>
+    <div style="font-size: 11px; color: var(--gold-glow); margin-top: 14px; letter-spacing: 1px;">
+      ⚡ POWERED BY KAPIL • ALIGNED WITH GOOGLE & MICROSOFT STANDARDS
+    </div>
+  </div>
+
   <!-- App Header -->
   <header class="app-header">
     <div class="logo-area">
@@ -34,7 +48,15 @@
       <button class="mode-btn" data-mode="ONLINE_ROOM">🌐 Online Room</button>
       <button class="mode-btn" data-mode="TIMED">⏱️ Timed Blitz</button>
 
-      <!-- Utility Buttons -->
+      <!-- Theme & Profile Controls -->
+      <button class="mode-btn" id="btn-theme-toggle" title="Toggle Light / Dark Mode">☀️ / 🌙</button>
+      <button class="user-profile-badge" id="btn-user-profile" title="Customize Profile & Avatar">
+        <span class="avatar-icon-small" id="header-avatar-icon">🧠</span>
+        <span class="avatar-name-small" id="header-user-name">Lead AI Architect</span>
+      </button>
+
+      <!-- Assessment, Badges & Certifications -->
+      <button class="action-btn gold" id="btn-open-exam" style="background: linear-gradient(135deg, #ffd700, #ff007f); color: #000; font-weight: 800;">🎓 60m Exam (200 MCQs)</button>
       <button class="action-btn gold" id="btn-open-certs">🏆 Badges & Certs</button>
       <button class="mode-btn" id="btn-open-codex">📚 AI Codex</button>
       <button class="mode-btn" id="btn-sound-toggle">🔊 Sound On</button>
@@ -42,6 +64,12 @@
       <button class="action-btn" id="btn-install-pwa" style="display: none;">📲 Install App</button>
     </div>
   </header>
+
+  <!-- Interactive Guidance Announcements Bar -->
+  <div class="announcement-bar" id="announcement-bar">
+    <span class="announcement-icon">📢</span>
+    <span class="announcement-text" id="announcement-text">SARLAYASH PRODUCTIONS PRESENTS: Welcome to AIVERSE 1.0 (Powered By Kapil)! Complete levels 1–10 to unlock badges. Pass the 60-Min 200 MCQ Assessment with ≥90% to unlock your official Master Certificate!</span>
+  </div>
 
   <!-- Main Game Arena -->
   <main class="main-layout">
@@ -173,6 +201,32 @@
     <div id="toast-desc">Scaled Dot-Product Attention: Q, K, V calculation complete.</div>
   </div>
 
+  <!-- MODAL: Onboarding & Avatar Profile -->
+  <div class="modal-backdrop" id="modal-onboarding">
+    <div class="modal-content" style="max-width: 640px; text-align: center;">
+      <div class="modal-header">
+        <h2 class="modal-title">🚀 Welcome to AIVERSE 1.0</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+        <strong>SARLAYASH PRODUCTIONS PRESENTS</strong> • Powered By Kapil.<br>Enter your candidate name and choose your custom avatar persona to begin your neural odyssey!
+      </p>
+      <div class="cert-input-group" style="margin-bottom: 14px; justify-content: center;">
+        <label for="onboarding-user-name" style="color: var(--cyan-glow); font-weight: 700;">Architect / Candidate Name:</label>
+        <input type="text" id="onboarding-user-name" value="Lead AI Architect" placeholder="Enter your full name" style="text-align: center; font-size: 16px; max-width: 320px;">
+      </div>
+      <div class="panel-title" style="margin: 10px 0 6px 0; justify-content: center;">
+        <span>👤</span> Select Your Avatar Persona
+      </div>
+      <div class="avatar-grid" id="onboarding-avatar-grid">
+        <!-- Injected dynamically via app.js using CONFIG.AVATARS -->
+      </div>
+      <button class="action-btn gold" id="btn-save-onboarding" style="width: 100%; margin-top: 14px; padding: 12px; font-size: 15px; font-weight: 800;">
+        🚀 LAUNCH NEURAL JOURNEY
+      </button>
+    </div>
+  </div>
+
   <!-- MODAL: Victory -->
   <div class="modal-backdrop" id="modal-victory">
     <div class="modal-content" style="max-width: 520px; text-align: center;">
@@ -219,11 +273,23 @@
       </div>
 
       <p style="font-size: 13px; color: var(--text-muted);">
-        Accredited credentials benchmarked to <strong>Google Cloud Generative AI</strong> & <strong>Microsoft Azure AI Engineer</strong> curriculum competencies. Download in vector PDF or high-resolution PNG format.
+        Accredited credentials benchmarked to <strong>Google Cloud Generative AI</strong> & <strong>Microsoft Azure AI Engineer</strong> competencies.
       </p>
 
-      <!-- Recipient Customizer -->
-      <div class="cert-controls">
+      <!-- Certificate Lock Screen Overlay / Banner -->
+      <div class="cert-lock-banner" id="cert-lock-banner">
+        <div class="cert-lock-icon">🔒</div>
+        <div class="cert-lock-title">OFFICIAL CERTIFICATE LOCKED</div>
+        <p class="cert-lock-desc">
+          In compliance with Google & Microsoft accreditation standards, the official <strong>Certificate of Architectural Mastery</strong> remains strictly locked until you score <strong>≥ 90% (180/200)</strong> on the Timed 60-Minute 200 MCQ Assessment.
+        </p>
+        <button class="action-btn gold" id="btn-cert-take-exam" style="padding: 10px 24px; font-size: 14px; font-weight: 800;">
+          🎓 Take 60-Min 200 MCQ Assessment Now
+        </button>
+      </div>
+
+      <!-- Recipient Customizer (Active only when Unlocked) -->
+      <div class="cert-controls" id="cert-controls-box">
         <div class="cert-input-group">
           <label for="cert-user-name">Your Full Name:</label>
           <input type="text" id="cert-user-name" value="Lead AI Architect" placeholder="Enter recipient name">
@@ -237,12 +303,112 @@
         <!-- Canvas injected via certs.js -->
       </div>
 
-      <!-- Verified Milestone Badges Section -->
-      <div class="panel-title" style="margin-top: 10px;">
-        <span>🎖️</span> Verified Milestone Badges (Click Any Badge to Download PNG)
+      <!-- Verified Milestone Badges Section (Unlocked Level-by-Level) -->
+      <div class="panel-title" style="margin-top: 16px;">
+        <span>🎖️</span> 10 Milestone Level Badges (Unlocked progressively upon completing Levels 1–10)
       </div>
       <div class="badge-preview-grid" id="badge-preview-grid">
-        <!-- Injected via certs.js -->
+        <!-- Injected via app.js / certs.js with progressive locking -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Timed 60-Minute 200 MCQ Exam Portal -->
+  <div class="modal-backdrop" id="modal-exam-portal">
+    <div class="modal-content" style="max-width: 1080px; width: 95vw;">
+      <div class="exam-portal-header">
+        <div>
+          <div style="font-size: 11px; color: var(--gold-glow); font-weight: 800; letter-spacing: 2px;">SARLAYASH PRODUCTIONS PRESENTS</div>
+          <h2 style="font-size: 20px; color: #fff; margin: 2px 0;">AIVERSE 1.0 • 200 MCQ ASSESSMENT</h2>
+          <span style="font-size: 12px; color: var(--cyan-glow);">Google & Microsoft Standard • 90% (180/200) Passing Threshold</span>
+        </div>
+        <div class="exam-timer-box" id="exam-timer-display">⏱️ 60:00</div>
+        <button class="modal-close">&times;</button>
+      </div>
+
+      <!-- Progress & Stats Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 12px 0 6px 0; font-size: 12px;">
+        <div>
+          <span>Answered: </span>
+          <strong id="exam-stat-answered" style="color: var(--cyan-glow);">0 / 200</strong>
+          <span style="margin: 0 10px; color: var(--text-muted);">|</span>
+          <span id="exam-stat-remaining" style="color: var(--text-muted);">200 Left</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="mode-btn" id="btn-exam-flag">🏳️ Flag for Review</button>
+          <button class="action-btn gold" id="btn-exam-submit">📝 Submit Assessment</button>
+        </div>
+      </div>
+
+      <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-bottom: 14px;">
+        <div id="exam-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #00f0ff, #ffd700); transition: width 0.2s;"></div>
+      </div>
+
+      <!-- Main Exam Grid: Left Question, Right Navigator -->
+      <div class="exam-main-grid">
+        <!-- Question Display Area -->
+        <div class="exam-question-card">
+          <div class="exam-q-header">
+            <span id="exam-q-number">Question 1 of 200</span>
+            <span id="exam-q-category" style="background: rgba(0,240,255,0.15); padding: 4px 10px; border-radius: 12px; font-size: 11px;">Classical AI & ML</span>
+          </div>
+          <div class="exam-q-title" id="exam-q-text">Loading question text...</div>
+          <div class="exam-options-stack" id="exam-options-container">
+            <!-- Options A, B, C, D injected -->
+          </div>
+          <div id="exam-explanation-box" style="display: none; background: rgba(0, 255, 136, 0.1); border: 1px solid var(--green-glow); padding: 12px; border-radius: 8px; font-size: 13px; color: #fff; margin-top: 10px;"></div>
+
+          <div style="display: flex; justify-content: space-between; margin-top: auto; padding-top: 12px;">
+            <button class="mode-btn" id="btn-exam-prev">⬅️ Previous</button>
+            <button class="action-btn" id="btn-exam-next">Next ➡️</button>
+          </div>
+        </div>
+
+        <!-- Right Question Navigator Panel (1 to 200) -->
+        <div class="exam-nav-panel">
+          <div class="exam-nav-title">Questions 1–200 Navigator</div>
+          <div class="exam-nav-grid-box" id="exam-nav-grid">
+            <!-- 200 boxes injected -->
+          </div>
+          <div style="font-size: 10px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; margin-top: 6px;">
+            <div><span style="color: var(--cyan-glow);">■</span> Answered</div>
+            <div><span style="color: #ff9900;">■</span> Flagged</div>
+            <div><span style="color: #fff;">□</span> Unanswered</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Exam Results -->
+  <div class="modal-backdrop" id="modal-exam-results">
+    <div class="modal-content" style="max-width: 580px; text-align: center;">
+      <div style="font-size: 54px; margin-bottom: 8px;">📊</div>
+      <h2 id="exam-res-title" style="font-size: 24px; color: var(--gold-glow); margin-bottom: 6px;">EXAM RESULTS</h2>
+      <div id="exam-res-badge" class="exam-badge-pass" style="display: inline-block; margin-bottom: 14px;">PASSED (HONORS)</div>
+      <p id="exam-res-msg" style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">
+        Assessment breakdown and accreditation status.
+      </p>
+
+      <div style="background: rgba(15, 25, 55, 0.7); border: 1px solid var(--cyan-glow); border-radius: 10px; padding: 16px; margin: 12px 0; display: flex; justify-content: space-around;">
+        <div>
+          <div style="font-size: 11px; color: var(--text-muted);">FINAL SCORE</div>
+          <div style="font-size: 26px; font-weight: 900; color: var(--cyan-glow);" id="exam-res-score">185 / 200</div>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: var(--text-muted);">PERCENTAGE</div>
+          <div style="font-size: 26px; font-weight: 900; color: var(--green-glow);" id="exam-res-pct">92.5%</div>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: var(--text-muted);">PASS BENCHMARK</div>
+          <div style="font-size: 26px; font-weight: 900; color: var(--gold-glow);">90.0%</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 16px; flex-wrap: wrap;">
+        <button class="action-btn gold" id="btn-exam-view-cert" style="display: none;">🏆 View & Download Official Certificate</button>
+        <button class="action-btn" id="btn-exam-retake">🔄 Retake Assessment</button>
+        <button class="mode-btn modal-close">Review Answers</button>
       </div>
     </div>
   </div>
@@ -288,6 +454,8 @@
   <script src="js/levels.js"></script>
   <script src="js/certs.js"></script>
   <script src="js/codex.js"></script>
+  <script src="js/exam-questions.js"></script>
+  <script src="js/exam-engine.js"></script>
   <script src="js/app.js"></script>
 
 </body>

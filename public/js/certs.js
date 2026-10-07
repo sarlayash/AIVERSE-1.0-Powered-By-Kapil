@@ -20,9 +20,11 @@ class CertificateEngine {
   renderCertificateCanvas(data) {
     const {
       userName = 'AI Architect',
-      tierTitle = 'Certified Autonomous Agent Systems Architect',
+      avatar = { icon: '🧠', name: 'Dr. Synapse' },
+      tierTitle = 'Certified Autonomous Agent & Generative AI Systems Architect',
       tierLevel = 10,
       score = 9850,
+      examScore = 188,
       credentialId = this.generateCredentialId(tierLevel, userName),
       issueDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     } = data;
@@ -126,27 +128,34 @@ class CertificateEngine {
     ctx.fillStyle = '#a0aec0';
     ctx.font = 'italic 20px "Georgia", serif';
     ctx.letterSpacing = '1px';
-    ctx.fillText('This official credential certifies that', width / 2, 310);
+    ctx.fillText('This official industry credential certifies that', width / 2, 305);
 
-    // Recipient Name
+    // Recipient Name & Avatar
+    const avatarIcon = avatar?.icon || '🧠';
+    const avatarRole = avatar?.role || avatar?.name || 'Chief AI Architect';
     ctx.fillStyle = '#ffd700';
-    ctx.font = 'bold 56px "Segoe UI", Roboto, sans-serif';
+    ctx.font = 'bold 50px "Segoe UI", Roboto, sans-serif';
     ctx.letterSpacing = '2px';
-    ctx.fillText(userName.toUpperCase(), width / 2, 385);
+    ctx.fillText(`${avatarIcon}  ${userName.toUpperCase()}`, width / 2, 375);
+
+    ctx.fillStyle = '#00f0ff';
+    ctx.font = 'bold 18px "Segoe UI", sans-serif';
+    ctx.letterSpacing = '1px';
+    ctx.fillText(`AVATAR CLASS: ${avatarRole.toUpperCase()}`, width / 2, 412);
 
     // Underlying decoration for name
     ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(width / 2 - 280, 410);
-    ctx.lineTo(width / 2 + 280, 410);
+    ctx.moveTo(width / 2 - 280, 428);
+    ctx.lineTo(width / 2 + 280, 428);
     ctx.stroke();
 
     // "Has successfully demonstrated mastery in:"
     ctx.fillStyle = '#e2e8f0';
     ctx.font = '20px "Segoe UI", Roboto, sans-serif';
     ctx.letterSpacing = '1px';
-    ctx.fillText('has demonstrated superior engineering competence and practical mastery in:', width / 2, 460);
+    ctx.fillText('has demonstrated superior engineering competence and passed the 200 MCQ assessment in:', width / 2, 468);
 
     // Certified Title
     ctx.fillStyle = '#00f0ff';
@@ -188,10 +197,11 @@ class CertificateEngine {
     });
 
     // Score & Honors Badge
+    const pct = ((examScore / 200) * 100).toFixed(1);
     ctx.fillStyle = '#00ff88';
     ctx.font = 'bold 20px "Segoe UI", Roboto, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`Compute Score: ${score.toLocaleString()} PTS  |  Mastery Rating: 99.4% (Honors Distinction)`, width / 2, 850);
+    ctx.fillText(`60-Min 200 MCQ Assessment Score: ${examScore} / 200 (${pct}%)  •  HONORS DISTINCTION (90%+ PASS)`, width / 2, 850);
 
     // Golden Official Seal
     const sealX = 300;
@@ -358,13 +368,15 @@ class CertificateEngine {
     ctx.fillText('GOOGLE & MICROSOFT STANDARDS', cx, cy - 172);
 
     // Big Emoji / Symbol Icon
-    ctx.font = '110px "Segoe UI Emoji", sans-serif';
-    ctx.fillText(tierData.badgeIcon || '🥇', cx, cy - 70);
+    const badgeSymbol = tierData.symbol || tierData.badgeIcon || '🥇';
+    ctx.font = '100px "Segoe UI Emoji", sans-serif';
+    ctx.fillText(badgeSymbol, cx, cy - 65);
 
-    // Tier Title
+    // Tier Title / Level Label
+    const tierLabel = tierData.level ? `LEVEL ${tierData.level} BENCHMARK` : (tierData.tier ? `${tierData.tier.toUpperCase()} TIER` : 'MILESTONE');
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 32px "Segoe UI", sans-serif';
-    ctx.fillText(tierData.tier.toUpperCase() + ' TIER', cx, cy + 40);
+    ctx.font = 'bold 24px "Segoe UI", sans-serif';
+    ctx.fillText(tierLabel, cx, cy + 35);
 
     // Main Designation
     ctx.fillStyle = '#00f0ff';
