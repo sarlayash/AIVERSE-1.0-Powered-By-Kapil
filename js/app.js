@@ -42,6 +42,7 @@ class SynapseApp {
     // Announcements
     this.announcements = [
       'SARLAYASH PRODUCTIONS PRESENTS: Welcome to AIVERSE 1.0 Powered By Kapil!',
+      '💡 Founder’s Vision: "Build more. Teach more. Learn every day." — Read the Note from Kapil below!',
       '🎖️ Milestone Badges: Complete Levels 1–10 to unlock verified badges for each AI architecture paradigm.',
       '🎓 60-Minute Assessment: 200 Industry-standard MCQs across Classical ML, GenAI, and Agentic AI. 90% required to pass!',
       '🔒 Official Certificate: Accredited to Google Cloud & Microsoft Azure standards, unlocked only after passing the exam.',
@@ -256,6 +257,48 @@ class SynapseApp {
     const saveOnboardBtn = document.getElementById('btn-save-onboarding');
     if (saveOnboardBtn) {
       saveOnboardBtn.addEventListener('click', () => this.saveOnboarding());
+    }
+
+    // Scroll to Note from Kapil section
+    const navFounderBtn = document.getElementById('btn-nav-founder');
+    if (navFounderBtn) {
+      navFounderBtn.addEventListener('click', () => {
+        const sec = document.getElementById('section-founder-note');
+        if (sec) {
+          sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const card = sec.querySelector('.founder-card-inner');
+          if (card) {
+            card.style.borderColor = 'var(--cyan-glow)';
+            card.style.boxShadow = '0 0 40px rgba(0, 240, 255, 0.6)';
+            setTimeout(() => {
+              card.style.borderColor = '';
+              card.style.boxShadow = '';
+            }, 1400);
+          }
+        }
+      });
+    }
+
+    // Actions from Founder's Note
+    const btnFounderPlay = document.getElementById('btn-founder-play');
+    if (btnFounderPlay) {
+      btnFounderPlay.addEventListener('click', () => {
+        document.getElementById('game-board')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
+
+    const btnFounderExam = document.getElementById('btn-founder-exam');
+    if (btnFounderExam) {
+      btnFounderExam.addEventListener('click', () => {
+        if (window.examPortal) window.examPortal.startExam();
+      });
+    }
+
+    const btnFounderCodex = document.getElementById('btn-founder-codex');
+    if (btnFounderCodex) {
+      btnFounderCodex.addEventListener('click', () => {
+        document.getElementById('modal-codex')?.classList.add('active');
+      });
     }
 
     // Sound toggle

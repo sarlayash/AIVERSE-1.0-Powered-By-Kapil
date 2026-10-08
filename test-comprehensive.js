@@ -155,13 +155,23 @@ const expectedElements = [
   'id="exam-nav-grid"',
   'id="modal-exam-results"',
   'src="js/exam-questions.js"',
-  'src="js/exam-engine.js"'
+  'src="js/exam-engine.js"',
+  'id="section-founder-note"',
+  'id="btn-nav-founder"',
+  'images/kapil-narula.jpg'
 ];
 
 expectedElements.forEach(el => {
   assert.ok(htmlContent.includes(el), `HTML must contain element ${el}`);
 });
 console.log(`✅ All ${expectedElements.length} required interactive DOM elements present in index.html.`);
+
+// Check Founder Image Asset File
+assert.ok(fs.existsSync(path.join(__dirname, 'images', 'kapil-narula.jpg')), 'Image images/kapil-narula.jpg must exist');
+assert.ok(fs.existsSync(path.join(__dirname, 'public', 'images', 'kapil-narula.jpg')), 'Image public/images/kapil-narula.jpg must exist');
+assert.ok(htmlContent.includes('Build more. Teach more. Learn every day.'), 'Founder quote must be in index.html');
+assert.ok(htmlContent.includes('Kapil Narula'), 'Kapil Narula must be mentioned in index.html');
+console.log(`✅ Kapil Narula portrait image and Founder's Note verified.`);
 
 // Check Studio Branding in HTML, CSS & Manifest
 assert.ok(htmlContent.includes('SARLAYASH PRODUCTIONS PRESENTS'), 'Branding: SARLAYASH PRODUCTIONS PRESENTS missing');
@@ -191,29 +201,36 @@ http.get('http://localhost:3000/', (res) => {
     assert.ok(data.includes('SARLAYASH'), 'Live page must contain SARLAYASH branding');
     console.log(`✅ HTTP GET /: Status 200, Content Verified.`);
 
-    // Test ZIP download endpoint
-    http.get('http://localhost:3000/api/download-app-zip', (zipRes) => {
-      assert.strictEqual(zipRes.statusCode, 200);
-      assert.ok(zipRes.headers['content-type'].includes('zip') || zipRes.headers['content-disposition'].includes('zip'));
-      console.log(`✅ HTTP GET /api/download-app-zip: Status 200, Valid ZIP Stream.`);
+    // Test Image Serving
+    http.get('http://localhost:3000/images/kapil-narula.jpg', (imgRes) => {
+      assert.strictEqual(imgRes.statusCode, 200, 'Image /images/kapil-narula.jpg must be served with status 200');
+      assert.ok(imgRes.headers['content-type'].includes('image'), 'Content-Type must be image');
+      console.log(`✅ HTTP GET /images/kapil-narula.jpg: Status 200, Image served successfully.`);
 
-      // Test WebSocket endpoint
-      const ws = new WebSocket('ws://localhost:3000/ws');
-      ws.on('open', () => {
-        ws.send(JSON.stringify({ type: 'CREATE_ROOM' }));
-      });
-      ws.on('message', (msg) => {
-        const parsed = JSON.parse(msg);
-        assert.strictEqual(parsed.type, 'ROOM_CREATED');
-        assert.ok(parsed.roomCode, 'Must return a roomCode');
-        console.log(`✅ WebSocket /ws: Connection established, Room Created (${parsed.roomCode}).`);
-        ws.close();
-        console.log('\n🎉 ALL COMPREHENSIVE TESTS PASSED WITH 100% SUCCESS!');
-        process.exit(0);
-      });
-      ws.on('error', (err) => {
-        console.error('WebSocket Error:', err);
-        process.exit(1);
+      // Test ZIP download endpoint
+      http.get('http://localhost:3000/api/download-app-zip', (zipRes) => {
+        assert.strictEqual(zipRes.statusCode, 200);
+        assert.ok(zipRes.headers['content-type'].includes('zip') || zipRes.headers['content-disposition'].includes('zip'));
+        console.log(`✅ HTTP GET /api/download-app-zip: Status 200, Valid ZIP Stream.`);
+
+        // Test WebSocket endpoint
+        const ws = new WebSocket('ws://localhost:3000/ws');
+        ws.on('open', () => {
+          ws.send(JSON.stringify({ type: 'CREATE_ROOM' }));
+        });
+        ws.on('message', (msg) => {
+          const parsed = JSON.parse(msg);
+          assert.strictEqual(parsed.type, 'ROOM_CREATED');
+          assert.ok(parsed.roomCode, 'Must return a roomCode');
+          console.log(`✅ WebSocket /ws: Connection established, Room Created (${parsed.roomCode}).`);
+          ws.close();
+          console.log('\n🎉 ALL COMPREHENSIVE TESTS PASSED WITH 100% SUCCESS!');
+          process.exit(0);
+        });
+        ws.on('error', (err) => {
+          console.error('WebSocket Error:', err);
+          process.exit(1);
+        });
       });
     });
   });
@@ -221,3 +238,4 @@ http.get('http://localhost:3000/', (res) => {
   console.error('HTTP Server Error:', err);
   process.exit(1);
 });
+

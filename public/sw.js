@@ -1,10 +1,11 @@
-const CACHE_NAME = 'aiverse-v1.0.0';
+const CACHE_NAME = 'aiverse-v1.1.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
   './css/style.css',
   './css/animations.css',
+  './images/kapil-narula.jpg',
   './js/config.js',
   './js/audio.js',
   './js/board.js',
